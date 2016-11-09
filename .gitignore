@@ -1,0 +1,12 @@
+# Binaries and build artifacts
+*.pyc
+build/
+dist/
+gzippy.egg-info/
+
+# Coverage
+.coverage
+
+# Virtualenvs
+venv
+venv-3.5.1
