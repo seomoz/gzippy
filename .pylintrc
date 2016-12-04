@@ -1,0 +1,28 @@
+# PyLint configuration file for the project aardwolf.
+
+[basic]
+const-rgx=(([A-Za-z_][A-Za-z0-9_]*)|(__.*__))$
+
+[typecheck]
+ignored-modules=
+
+[messages control]
+# Disable the following PyLint messages:
+# R0903 - Not enough public methods
+# R0201 - Method could be a function (This fails to understand certain decorators)
+# W0141 - Bad Builtin
+# W0511 - Fixme (all todos, notes)
+disable=R0903,R0201,W0141,W0511
+
+[reports]
+# Available formats are text, parseable, colorized and html
+output-format=colorized
+
+# Tells whether to display a full report or only the messages
+reports=no
+
+[miscellaneous]
+# List of note tags to take in consideration, separated by a comma.
+# FIXME -- something which needs fixing
+# TODO  -- future plan
+notes=FIXME,TODO
