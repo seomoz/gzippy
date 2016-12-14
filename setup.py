@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name           = 'gzippy',
-    version          = '0.1.0',
+    version          = '0.1.1',
     description      = 'Gzip file utility.',
     url              = 'http://github.com/seomoz/gzippy',
     author           = 'Dan Lecocq',
