@@ -23,8 +23,8 @@ def timer(name, runs=1):
     print('Average of %s runs: %s\n' % (runs, sum(times) / len(times)))
 
 
-split = ['This is some example content'] * 100000
-joined = '\n'.join(split)
+split = [b'This is some example content'] * 100000
+joined = b'\n'.join(split)
 
 for _ in timer('Gzip single write', 5):
     with gzip.open('example.gz', 'wb') as fout:

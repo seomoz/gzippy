@@ -2,9 +2,10 @@
 
 import unittest
 
+from test import scratch_file
+
 import gzippy
 
-from . import scratch_file
 
 
 class GzippyTest(unittest.TestCase):
