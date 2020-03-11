@@ -13,10 +13,10 @@ def from_file(fobj):
         raise ValueError("Simultaneous reads and writes not supported.")
 
     if "r" in fobj.mode:
-        return GzipReader(fobj.raw)
+        return GzipReader(fobj)
 
     if "w" in fobj.mode:
-        return GzipWriter(fobj.raw)
+        return GzipWriter(fobj)
 
     raise ValueError("Mode not supported")
 

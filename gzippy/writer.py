@@ -18,9 +18,17 @@ class GzipWriter:
     def __init__(self, fobj, compresslevel=9, **kwargs):
         """Construct instance of class around the input file obj."""
         self.raw = fobj
+        self.name = fobj.name
+
         self.gzip = gzip.GzipFile(
-            fileobj=fobj, compresslevel=compresslevel, **kwargs
+            filename=self.name,
+            fileobj=self.raw,
+            compresslevel=compresslevel,
+            **kwargs
         )
+
+    def __getattr__(self, attr):
+        return getattr(self.raw, attr)
 
     def close(self):
         """Close the file."""
@@ -30,7 +38,4 @@ class GzipWriter:
 
     def write(self, data):
         """Write data to the file."""
-        if isinstance(data, str):
-            self.gzip.write(bytes(data, "latin-1"))
-        else:
-            self.gzip.write(data)
+        self.gzip.write(data)

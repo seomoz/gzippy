@@ -35,7 +35,7 @@ class FilesTest(unittest.TestCase):
 
     def test_gzip_compatible(self):
         '''Output compatible with the gzip command-line utility.'''
-        content = 'This is some test content.'
+        content = b'This is some test content.'
 
         with scratch_dir() as path:
             zipped = os.path.join(path, 'example.gz')
@@ -45,7 +45,7 @@ class FilesTest(unittest.TestCase):
 
             subprocess.check_call(['gunzip', zipped], stderr=subprocess.STDOUT)
 
-            with open(unzipped) as fin:
+            with open(unzipped, 'rb') as fin:
                 self.assertEqual(fin.read(), content)
 
     def test_lines(self):
@@ -75,7 +75,7 @@ class FilesTest(unittest.TestCase):
         '''Raises an exception when the crc doesn't match.'''
         with scratch_file('example.gz') as path:
             with gzippy.open(path, 'wb') as fout:
-                fout.write('This is some test content.')
+                fout.write(b'This is some test content.')
 
             # Rewrite the last eight bytes
             with open(path, 'r+b') as fout:
@@ -90,7 +90,7 @@ class FilesTest(unittest.TestCase):
         '''Raises an exception when the size doesn't match.'''
         with scratch_file('example.gz') as path:
             with gzippy.open(path, 'wb') as fout:
-                fout.write('This is some test content.')
+                fout.write(b'This is some test content.')
 
             # Rewrite the last four bytes
             with open(path, 'r+b') as fout:

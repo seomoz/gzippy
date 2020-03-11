@@ -9,7 +9,12 @@ class GzipReader:
     def __init__(self, fobj):
         """Store input object & handle Gzip object using it."""
         self.raw = fobj
-        self.gzip = gzip.GzipFile(fileobj=fobj)
+        self.name = fobj.name
+
+        self.gzip = gzip.GzipFile(filename=self.name, fileobj=self.raw)
+
+    def __getattr__(self, attr):
+        return getattr(self.raw, attr)
 
     def readlines(self):
         """Delegate readlines call to internal gzip object."""
