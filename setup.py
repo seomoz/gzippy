@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name             = 'gzippy',
-    version          = '0.2.0',
+    version          = '0.2.1',
     description      = 'Gzip file utility.',
     url              = 'http://github.com/seomoz/gzippy',
     author           = 'Pro Services',
