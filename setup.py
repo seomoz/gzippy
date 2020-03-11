@@ -4,10 +4,10 @@ from distutils.core import setup
 
 setup(
     name             = 'gzippy',
-    version          = '0.2.1',
+    version          = '0.2.2',
     description      = 'Gzip file utility.',
     url              = 'http://github.com/seomoz/gzippy',
-    author           = 'Pro Services',
+    author           = 'Moz, Inc.',
     author_email     = 'turbo@moz.com',
     packages         = ['gzippy'],
     package_dir      = {'gzippy': 'gzippy'},
