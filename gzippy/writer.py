@@ -28,6 +28,7 @@ class GzipWriter:
         )
 
     def __getattr__(self, attr):
+        """Delegate attributes to internal object."""
         return getattr(self.raw, attr)
 
     def close(self):

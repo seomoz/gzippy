@@ -14,6 +14,7 @@ class GzipReader:
         self.gzip = gzip.GzipFile(filename=self.name, fileobj=self.raw)
 
     def __getattr__(self, attr):
+        """Delegate attributes to internal object."""
         return getattr(self.raw, attr)
 
     def readlines(self):
