@@ -1,71 +1,34 @@
-'''A reader of gzip files.'''
+"""A reader of gzip files."""
 
-import struct
-import zlib
-
-from .header import Header
+import gzip
 
 
-class GzipReader(object):
-    '''A reader of gzip files.'''
+class GzipReader:
+    """A reader of gzip files."""
 
     def __init__(self, fobj):
+        """Store input object & handle Gzip object using it."""
         self.raw = fobj
-        self.crc = zlib.crc32('') & 0xFFFFFFFF
-        self.size = 0
-        self.decompressobj = zlib.decompressobj(-zlib.MAX_WBITS)
-        self.header = Header.read(self.raw)
-        self.chunks = iter(self.chunks_generator())
+        self.name = fobj.name
 
-    def chunks_generator(self):
-        '''Generator of decompressed data.'''
-        buf = self.raw.read(4096)
-        while buf:
-            uncompressed = self.decompressobj.decompress(buf)
-            self.size += len(uncompressed)
-            self.crc = zlib.crc32(uncompressed, self.crc) & 0xFFFFFFFF
-            yield uncompressed
-            buf = self.raw.read(4096)
+        self.gzip = gzip.GzipFile(filename=self.name, fileobj=self.raw)
 
-        # Yield the last flushed block
-        uncompressed = self.decompressobj.flush()
-        self.size += len(uncompressed)
-        self.crc = zlib.crc32(uncompressed, self.crc) & 0xFFFFFFFF
-        yield uncompressed
+    def __getattr__(self, attr):
+        """Delegate attributes to internal object."""
+        return getattr(self.raw, attr)
 
-        # Check the CRC and size
-        crc, size = struct.unpack('<II', self.decompressobj.unused_data[-8:])
-        if crc != self.crc:
-            raise IOError('CRC mismatch: %s (read) != %s (computed)' % (crc, self.crc))
-        if size != self.size:
-            raise IOError('Size mismatch: %s (read) != %s (computed)' % (size, self.size))
-
-    def lines(self):
-        '''Generator of the lines in a file.'''
-        last = ''
-        for chunk in self.chunks:
-            chunk = last + chunk
-            start = 0
-            index = chunk.find('\n')
-            while index != -1:
-                yield chunk[start:index+1]
-                start, index = index + 1, chunk.find('\n', index + 1)
-
-            last = chunk[start:]
-
-        yield last
+    def readlines(self):
+        """Delegate readlines call to internal gzip object."""
+        yield from self.gzip.readlines()
 
     def __iter__(self):
-        '''Generator of the lines in this file.'''
-        return self.lines()
+        """Line by line iterator over the internal contents of the file."""
+        yield from self.readlines()
 
     def read(self, size=-1):
-        '''Read data from the file.'''
-        if size == -1:
-            return ''.join(self.chunks)
-        else:
-            raise IOError('Incremental reads not supported.')
+        """Read data from the file."""
+        return self.gzip.read(size)
 
     def close(self):
-        '''Close the file.'''
+        """Close the file."""
         self.raw.close()

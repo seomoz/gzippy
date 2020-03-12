@@ -1,47 +1,42 @@
-'''A writer of gzip files.'''
+"""Provides ability to open & write Gzip files."""
 
-import contextlib
-import struct
-import zlib
+import gzip
 
-from .header import Header
+from contextlib import closing, contextmanager
 
 
-class GzipWriter(object):
-    '''A writer of gzip files.'''
+class GzipWriter:
+    """A writer of gzip files."""
 
     @classmethod
-    @contextlib.contextmanager
+    @contextmanager
     def open(cls, path, *args, **kwargs):
-        '''Open the provided path.'''
-        with contextlib.closing(cls(open(path, 'wb'), *args, **kwargs)) as fout:
+        """Open the provided path."""
+        with closing(cls(open(path, "wb"), *args, **kwargs)) as fout:
             yield fout
 
     def __init__(self, fobj, compresslevel=9, **kwargs):
+        """Construct instance of class around the input file obj."""
         self.raw = fobj
-        self.crc = zlib.crc32('') & 0xFFFFFFFF
-        self.size = 0
-        self.compressobj = zlib.compressobj(compresslevel,
-                                            zlib.DEFLATED,
-                                            -zlib.MAX_WBITS,
-                                            zlib.DEF_MEM_LEVEL,
-                                            0)
+        self.name = fobj.name
 
-        # Write the header
-        self.header = Header(**kwargs)
-        self.header.write(self.raw)
+        self.gzip = gzip.GzipFile(
+            filename=self.name,
+            fileobj=self.raw,
+            compresslevel=compresslevel,
+            **kwargs
+        )
+
+    def __getattr__(self, attr):
+        """Delegate attributes to internal object."""
+        return getattr(self.raw, attr)
 
     def close(self):
-        '''Close the file.'''
-        try:
-            self.raw.write(self.compressobj.flush(zlib.Z_FINISH))
-            self.raw.write(struct.pack('<II', self.crc, self.size))
-            self.raw.flush()
-        finally:
-            self.raw.close()
+        """Close the file."""
+        self.gzip.flush()
+        self.gzip.close()
+        self.raw.close()
 
     def write(self, data):
-        '''Write data to the file.'''
-        self.raw.write(self.compressobj.compress(data))
-        self.size += len(data)
-        self.crc = zlib.crc32(data, self.crc) & 0xFFFFFFFF
+        """Write data to the file."""
+        self.gzip.write(data)

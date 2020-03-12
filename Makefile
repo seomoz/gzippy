@@ -6,7 +6,9 @@ nose:
 
 lint:
 	pylint gzippy
-	pep8 gzippy
+	pycodestyle gzippy
+	pydocstyle gzippy
+	flake8 gzippy
 
 install:
 	python setup.py install
